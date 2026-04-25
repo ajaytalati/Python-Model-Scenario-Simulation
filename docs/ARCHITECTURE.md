@@ -144,6 +144,8 @@ imports back to `from simulator`.
 | psim version | scenario schema | tested public-dev commit | tested SMC² commit |
 |--------------|-----------------|---------------------------|---------------------|
 | `0.1.0` | `1.0` | `51544049` | (the C-fix commit on `main`) |
+| `0.1.1` | `1.0` | `7c033c6` (fsa_high_res added) | `cebe9c7` |
+| `0.1.2` | `1.0` | `74dfa80` (SWAT 4-channel est) | (pending SWAT SMC² port) |
 
 When bumping `SCENARIO_SCHEMA_VERSION`, add a row here and update both
 the SMC² adapter and the public dev repo's compatibility note.

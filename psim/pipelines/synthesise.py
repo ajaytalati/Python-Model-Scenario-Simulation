@@ -60,6 +60,11 @@ def integrate_sde_numpy(
     sqrt_sub_dt = np.sqrt(sub_dt)
     sigma = np.asarray(diffusion_diagonal, dtype=np.float64)
 
+    # Constant-diffusion models (e.g. SWAT, DIFFUSION_DIAGONAL_CONSTANT)
+    # provide ``noise_scale_fn=None``; the diffusion vector itself is
+    # the per-step noise scale.
+    _ones = np.ones(n_state, dtype=np.float64)
+
     y = np.asarray(init_state, dtype=np.float64).copy()
     traj = np.zeros((n_bins, n_state), dtype=np.float64)
 
@@ -67,7 +72,7 @@ def integrate_sde_numpy(
         t_days = k * dt
         for _ in range(n_substeps):
             dy = drift_fn(t_days, y, truth_params, aux)
-            ns = noise_scale_fn(y, truth_params)
+            ns = noise_scale_fn(y, truth_params) if noise_scale_fn else _ones
             z = rng.standard_normal(n_state)
             y = y + sub_dt * dy + sqrt_sub_dt * sigma * ns * z
             for i, (lo, hi) in enumerate(state_bounds):
@@ -89,6 +94,7 @@ def synthesise_scenario(
     n_substeps: int = 4,
     seed: int = 42,
     state_bounds: list | None = None,
+    obs_channel_names: tuple | list | set | None = None,
 ) -> SimRun:
     """Forward-integrate the model and run all of its observation channels.
 
@@ -96,6 +102,13 @@ def synthesise_scenario(
     the SDE integration, then iterates over ``model_sim.channels``
     in dependency order to produce all observations (sleep-gated HR,
     Bernoulli sleep, etc.).
+
+    ``obs_channel_names`` (optional): the subset of channel names that
+    should be classified as observations (vs exogenous broadcasts).
+    Defaults to channels whose name starts with ``'obs_'`` — the
+    fsa_high_res convention. Models like SWAT that name observation
+    channels without the prefix (``'hr'``, ``'sleep'``, ...) must
+    pass this explicitly.
 
     Returns a ``SimRun``. Missing-data corruption is applied separately
     by the caller (see ``psim.scenarios.missing_data``).
@@ -131,14 +144,19 @@ def synthesise_scenario(
     obs_channels: Dict[str, dict] = {}
     exogenous_channels: Dict[str, dict] = {}
 
+    if obs_channel_names is None:
+        # Legacy fsa_high_res convention: 'obs_' prefix marks observations.
+        obs_set = {ch.name for ch in model_sim.channels
+                   if ch.name.startswith("obs_")}
+    else:
+        obs_set = set(obs_channel_names)
+
     for ch in model_sim.channels:
         prior = {name: obs_channels[name]
                  for name in ch.depends_on if name in obs_channels}
         out = ch.generate_fn(trajectory, t_grid, truth_params, aux,
                               prior, seed + 100)
-        # Heuristic: name starts with 'obs_' → observation channel;
-        # otherwise (T_B / Phi / C / ...) → exogenous broadcast.
-        if ch.name.startswith("obs_"):
+        if ch.name in obs_set:
             obs_channels[ch.name] = out
         else:
             exogenous_channels[ch.name] = out

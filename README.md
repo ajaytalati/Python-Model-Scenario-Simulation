@@ -87,6 +87,24 @@ docs/                            # architecture + porting + format + bridge
 
 ## Status
 
+**v0.1.2** — second model through the workflow:
+- **SWAT** (Sleep-Wake-Adenosine-Testosterone) added as the second
+  reference model. 4 packaged scenario artifacts in `outputs/swat/`
+  (Sets A/B/C/D from
+  [SWAT TESTING.md](https://github.com/ajaytalati/Python-Model-Development-Simulation/blob/main/version_1/models/swat/TESTING.md)).
+- **Mixed-likelihood §1.4 discipline** exercised: Gaussian (HR + stress)
+  + Poisson (steps) + 3-level ordinal (sleep). All channel-prediction
+  parities pass.
+- **3 sim/est gaps surfaced and fixed upstream** during the SWAT port,
+  exactly as the workflow gate is supposed to do:
+  [issue #2](https://github.com/ajaytalati/Python-Model-Development-Simulation/issues/2)
+  (V_h, V_n exogenous treatment) — open for v0.1.3;
+  [issue #3](https://github.com/ajaytalati/Python-Model-Development-Simulation/issues/3) /
+  [PR #4](https://github.com/ajaytalati/Python-Model-Development-Simulation/pull/4)
+  (estimation.py 4-channel catch-up + dC drift fix) — merged.
+
+v0.1.1 — fsa_high_res moved to public dev repo as canonical home.
+
 v0.1.0 (initial release):
 - Reference implementation: high_res_FSA model from the SMC² repo.
 - Validates → packages a 14-day rolling scenario that the SMC² driver

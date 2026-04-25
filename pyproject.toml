@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "psim"
-version = "0.1.1"
+version = "0.1.2"
 description = "Scenario simulation, validation, and packaging — the mandatory pre-SMC² stage for SDE state-space models built on Python-Model-Development-Simulation."
 readme = "README.md"
 requires-python = ">=3.10"
