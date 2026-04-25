@@ -101,7 +101,9 @@ def synthesise_scenario(
     by the caller (see ``psim.scenarios.missing_data``).
     """
     if state_bounds is None:
-        state_bounds = [(s.lo, s.hi) for s in model_sim.states]
+        state_bounds = [
+            (s.lower_bound, s.upper_bound) for s in model_sim.states
+        ]
     state_names = [s.name for s in model_sim.states]
 
     aux = model_sim.make_aux_fn(
