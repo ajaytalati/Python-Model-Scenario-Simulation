@@ -1,16 +1,46 @@
 """Shared pytest fixtures.
 
-Defines a tiny 1-state OU-like stub model so tests can exercise the
-psim pipelines without depending on the external SMC² repo or the
-not-yet-public-dev-repo high_res_FSA model.
+Defines a tiny 1-state OU-like stub model so the bulk of tests can
+exercise the psim pipelines without external dependencies. The
+fsa_high_res-specific tests opt in to the public dev repo via the
+``has_public_dev_high_res_fsa`` skip-marker.
 """
 
 from __future__ import annotations
+
+import os
+import sys
 
 import numpy as np
 import pytest
 
 from psim._vendored.simulator.sde_model import SDEModel, StateSpec, ChannelSpec
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Public dev repo path (for fsa_high_res-specific tests)
+# ─────────────────────────────────────────────────────────────────────
+
+PUBLIC_DEV_V1 = os.path.expanduser(
+    "~/Repos/Python-Model-Development-Simulation/version_1"
+)
+
+
+def _public_dev_available() -> bool:
+    return os.path.isdir(os.path.join(PUBLIC_DEV_V1, "models", "fsa_high_res"))
+
+
+if _public_dev_available() and PUBLIC_DEV_V1 not in sys.path:
+    sys.path.append(PUBLIC_DEV_V1)
+
+
+requires_public_dev = pytest.mark.skipif(
+    not _public_dev_available(),
+    reason=(
+        f"fsa_high_res-specific tests need the public dev repo cloned at "
+        f"{PUBLIC_DEV_V1}. Skip if not present."
+    ),
+)
 
 
 def _stub_drift(t, y, params, aux):

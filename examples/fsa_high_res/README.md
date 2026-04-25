@@ -24,14 +24,14 @@ The artifact is consumed by the SMC² repo's driver via the
 Same seed reproduces the published 96.8% mean coverage / 27-of-27 PASS
 result from the SMC² repo's `outputs/fsa_high_res_rolling/C_phase_fix_result.md`.
 
-## Model location (temporary)
+## Model location
 
-Until high_res_FSA lands in the public dev repo
-([Python-Model-Development-Simulation](https://github.com/ajaytalati/Python-Model-Development-Simulation)),
-this example imports the model from the user's local SMC² repo at
-`~/Repos/smc2_blackjax_framework` via sys.path injection. After the
-public-repo PR merges, the import will switch to:
+`fsa_high_res` lives canonically in the public dev repo:
+[Python-Model-Development-Simulation](https://github.com/ajaytalati/Python-Model-Development-Simulation)
+under `version_1/models/fsa_high_res/`. The example expects that repo
+to be cloned at `~/Repos/Python-Model-Development-Simulation` (set
+`PUBLIC_DEV_V1` in the script if you've put it elsewhere).
 
-```python
-from version_1.models.fsa_high_res.simulation import HIGH_RES_FSA_MODEL
-```
+When the public dev repo gains a `pyproject.toml`, this can be
+replaced with a `pip install` dependency declaration in
+`pyproject.toml` here.

@@ -5,11 +5,6 @@ Produces a packaged scenario artifact that the SMC² repo's driver
 consumes (via a thin --scenario-artifact loader). Same seed reproduces
 the published 96.8% mean coverage / 27-of-27 PASS result documented
 at https://github.com/ajaytalati/smc2-blackjax-rolling/blob/main/outputs/fsa_high_res_rolling/C_phase_fix_result.md
-
-NOTE: until high_res_FSA lands in the public dev repo (separate PR),
-this example imports the model from the user's local SMC² repo via
-sys.path injection. After that PR merges, replace the import with
-`from version_1.models.fsa_high_res.simulation import HIGH_RES_FSA_MODEL`.
 """
 
 from __future__ import annotations
@@ -17,14 +12,21 @@ from __future__ import annotations
 import os
 import sys
 
-# --- import high_res_FSA from the local SMC² repo (temporary) ------------
-SMC2_REPO = os.path.expanduser("~/Repos/smc2_blackjax_framework")
-if not os.path.isdir(SMC2_REPO):
+# fsa_high_res lives canonically in the public dev repo
+# (Python-Model-Development-Simulation). Add its version_1/ to sys.path
+# so `from models.fsa_high_res...` resolves there.
+PUBLIC_DEV_V1 = os.path.expanduser(
+    "~/Repos/Python-Model-Development-Simulation/version_1"
+)
+if not os.path.isdir(PUBLIC_DEV_V1):
     raise SystemExit(
-        f"This example needs the SMC² repo cloned at {SMC2_REPO} until "
-        "high_res_FSA lands in the public dev repo. Adjust SMC2_REPO."
+        f"fsa_high_res model lives in the public dev repo at "
+        f"{PUBLIC_DEV_V1}. Clone "
+        "https://github.com/ajaytalati/Python-Model-Development-Simulation "
+        f"there or adjust PUBLIC_DEV_V1."
     )
-sys.path.insert(0, SMC2_REPO)
+if PUBLIC_DEV_V1 not in sys.path:
+    sys.path.insert(0, PUBLIC_DEV_V1)
 
 import numpy as np
 
