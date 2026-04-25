@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "psim"
+version = "0.1.0"
+description = "Scenario simulation, validation, and packaging — the mandatory pre-SMC² stage for SDE state-space models built on Python-Model-Development-Simulation."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Ajay Talati"}]
+license = {text = "MIT"}
+dependencies = [
+  "numpy>=1.24",
+  "jax>=0.4",
+  "jaxlib",
+  "matplotlib>=3.6",
+  "scipy>=1.10",
+]
+# Note: framework code from Python-Model-Development-Simulation is vendored
+# under psim/_vendored/ because the upstream repo is not yet pip-installable
+# (no pyproject.toml). See HANDOFF.md / docs/ARCHITECTURE.md "tech debt"
+# section for the unvendor follow-up plan.
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-cov", "ruff>=0.4"]
+
+[project.scripts]
+psim = "psim.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["psim*"]
+exclude = ["tests*", "examples*", "outputs*", "docs*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B"]
+ignore = ["E501"]   # line length governed by formatter / case-by-case
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
