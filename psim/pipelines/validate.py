@@ -38,10 +38,12 @@ class ValidationReport:
             all_passed=self.all_passed,
             n_passed=self.n_passed,
             n_failed=self.n_failed,
+            n_warnings=len(self.physics.warnings) if self.physics else 0,
             physics=(
                 None if self.physics is None
                 else dict(passed=self.physics.passed,
                           failed_checks=self.physics.failed_checks,
+                          warnings=self.physics.warnings,
                           raw_report=self.physics.raw_report)
             ),
             consistency=[
@@ -62,8 +64,15 @@ def validate_simrun(
     *,
     consistency_checks: List[ConsistencyResult] | None = None,
     plot_paths: List[str] | None = None,
+    treat_realism_as_gate: bool = False,
+    print_warnings: bool = True,
 ) -> ValidationReport:
     """Aggregate physics + consistency checks into a single report.
+
+    Surfaces realism warnings (``*_realistic: 'no'`` flags from the
+    model's ``verify_physics_fn``) to the console. When
+    ``treat_realism_as_gate=True``, realism failures also fail the
+    physics gate (refuse packaging).
 
     Note: caller is responsible for running the consistency checks
     (because they need both the SDEModel and EstimationModel) and
@@ -75,7 +84,26 @@ def validate_simrun(
         sim_run.trajectory,
         np.arange(sim_run.n_bins_total) * sim_run.dt_days,
         sim_run.truth_params,
+        treat_realism_as_gate=treat_realism_as_gate,
     )
+
+    # Surface realism warnings to console — these are the
+    # biological-realism flags that indicate a model-tuning concern
+    # (the simulator's truth doesn't look like real wearable data).
+    # See the workflow-gate observation on public-dev #5.
+    if print_warnings and physics_result.warnings:
+        print(f"   physics WARNINGS ({len(physics_result.warnings)} realism flag(s)):")
+        for w in physics_result.warnings:
+            metric_str = ""
+            if "metric_value" in w:
+                v = w["metric_value"]
+                metric_str = (
+                    f" ({w['metric_key']} = {v:.4g})"
+                    if isinstance(v, float)
+                    else f" ({w['metric_key']} = {v!r})"
+                )
+            print(f"     WARN: {w['key']} = {w['value']!r}{metric_str}")
+
     consistency_checks = list(consistency_checks or [])
     plot_paths = list(plot_paths or [])
 

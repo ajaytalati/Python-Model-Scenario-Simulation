@@ -127,6 +127,9 @@ def main():
         model_version="0.1",
         scenario_name=SCENARIO_NAME,
         require_all_passed=False,    # in v0.1.0 we package even if no consistency checks ran
+        # Per-model diagnostic plot in artifact (psim #1)
+        model_sim=HIGH_RES_FSA_MODEL,
+        emit_diagnostic_plot=True,
     )
     print(f"\nDone. Artifact at: {artifact_dir}")
     return 0

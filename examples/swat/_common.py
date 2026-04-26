@@ -107,6 +107,11 @@ def run_swat_scenario(
         model_version="1.0",
         scenario_name=scenario_name,
         require_all_passed=False,
+        # Emit the per-model diagnostic plot at packaging time
+        # (psim #1) — surfaces biological-realism issues here, not
+        # 1-2 stages downstream.
+        model_sim=SWAT_MODEL,
+        emit_diagnostic_plot=True,
     )
     print(f"\nDone. Artifact at: {artifact_dir}")
     return 0
