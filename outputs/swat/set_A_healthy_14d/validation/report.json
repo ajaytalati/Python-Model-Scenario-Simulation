@@ -1,0 +1,47 @@
+{
+  "all_passed": true,
+  "n_passed": 1,
+  "n_failed": 0,
+  "n_warnings": 2,
+  "physics": {
+    "passed": true,
+    "failed_checks": [],
+    "warnings": [
+      {
+        "key": "sleep_fraction_realistic",
+        "value": "no",
+        "metric_key": "sleep_fraction",
+        "metric_value": 0.4412202380952381
+      },
+      {
+        "key": "deep_sleep_fraction_realistic",
+        "value": "no",
+        "metric_key": "deep_sleep_fraction",
+        "metric_value": 0.3335813492063492
+      }
+    ],
+    "raw_report": {
+      "W_in_0_1": true,
+      "Zt_in_0_1": true,
+      "a_in_0_1": true,
+      "T_nonneg": true,
+      "T_bounded": true,
+      "all_finite": true,
+      "W_range": 1.0,
+      "Zt_range": 0.9945897733542871,
+      "T_range": 0.5480685922812301,
+      "T_mean": 0.8985221666398583,
+      "sleep_fraction": 0.4412202380952381,
+      "deep_sleep_fraction": 0.3335813492063492,
+      "Zt_max": 0.9945897733542871,
+      "Zt_p99": 0.9604817071854115,
+      "c2_threshold": 0.667,
+      "sleep_fraction_realistic": "no",
+      "deep_sleep_fraction_realistic": "no",
+      "Zt_reaches_deep_threshold_realistic": "yes"
+    }
+  },
+  "consistency": [],
+  "plot_paths": [],
+  "notes": []
+}
